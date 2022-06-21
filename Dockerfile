@@ -18,12 +18,15 @@ ARG DEV=false
 # 따라서 실제로 그렇게 많은 단점은 없지만 충돌하는 종속성으로부터 보호합니다.
 RUN python -m venv /py && \
   /py/bin/pip install --upgrade pip && \
+  apk add --update --no-cache postgresql-client && \
+  apk add --upgrade --no-cache --virtual .tmp-build-deps \
+  build-base postgresql-dev musl-dev && \
   /py/bin/pip install -r /tmp/requirements.txt && \
   if [ $DEV = "true" ]; \
   then /py/bin/pip install -r /tmp/requirements.dev.txt; \
   fi && \
-
   rm -rf /tmp && \
+  apk del .tmp-build-deps && \
   adduser \
   --disabled-password \
   --no-create-home \
