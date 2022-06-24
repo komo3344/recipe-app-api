@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # LOCAL APPS
     'core',
     'user',
+    'recipe',
     # THIRD PARTY APPS
     'rest_framework',
     'rest_framework.authtoken',
