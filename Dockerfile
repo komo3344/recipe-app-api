@@ -17,20 +17,24 @@ ARG DEV=false
 # Docker 이미지는 실제로 그렇게 많은 오버헤드를 발생시키지 않습니다.
 # 따라서 실제로 그렇게 많은 단점은 없지만 충돌하는 종속성으로부터 보호합니다.
 RUN python -m venv /py && \
-  /py/bin/pip install --upgrade pip && \
-  apk add --update --no-cache postgresql-client && \
-  apk add --upgrade --no-cache --virtual .tmp-build-deps \
-  build-base postgresql-dev musl-dev && \
-  /py/bin/pip install -r /tmp/requirements.txt && \
-  if [ $DEV = "true" ]; \
-  then /py/bin/pip install -r /tmp/requirements.dev.txt; \
-  fi && \
-  rm -rf /tmp && \
-  apk del .tmp-build-deps && \
-  adduser \
-  --disabled-password \
-  --no-create-home \
-  django-user
+    /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
+    apk add --upgrade --no-cache --virtual .tmp-build-deps \
+    build-base postgresql-dev musl-dev zlib zlib-dev && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    if [ $DEV = "true" ]; \
+    then /py/bin/pip install -r /tmp/requirements.dev.txt; \
+    fi && \
+    rm -rf /tmp && \
+    apk del .tmp-build-deps && \
+    adduser \
+    --disabled-password \
+    --no-create-home \
+    django-user && \
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol
 
 # 이미지 내부의 환경변수가 업데이트되고 경로 환경 변수가 업데이트 됩니다.
 ENV PATH="/py/bin:$PATH"
